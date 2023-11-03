@@ -1,0 +1,5 @@
+pc-serial-port/*.dll
+pc-serial-port/*.o
+pc-serial-port/*.exe
+
+pico-firmware/build
