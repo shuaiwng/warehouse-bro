@@ -12,42 +12,49 @@ int main(){
         0,
         0,
         OPEN_EXISTING,
-        FILE_ATTRIBUTE_NORMAL,
+        0,
         0);
+
+    if (hSerial == INVALID_HANDLE_VALUE) 
+    {
+        printf ("CreateFile failed with error %ld.\n", GetLastError());
+        return (1);
+    }
 
     DCB dcbSerialParams = {0};
     dcbSerialParams.DCBlength=sizeof(dcbSerialParams);
     if (!GetCommState(hSerial, &dcbSerialParams)) {
-    //error getting state
+        std::cout << "[!] GetCommState error." << std::endl;
     }
     dcbSerialParams.BaudRate=CBR_115200;
     dcbSerialParams.ByteSize=8;
     dcbSerialParams.StopBits=ONESTOPBIT;
     dcbSerialParams.Parity=NOPARITY;
     if(!SetCommState(hSerial, &dcbSerialParams)){
-    //error setting serial port state
+        std::cout << "[!] SetCommState error." << std::endl;
     }
 
     COMMTIMEOUTS timeouts={0};
     timeouts.ReadIntervalTimeout=50;
     timeouts.ReadTotalTimeoutConstant=50;
-    timeouts.ReadTotalTimeoutMultiplier=10;
+    timeouts.ReadTotalTimeoutMultiplier=50;
     timeouts.WriteTotalTimeoutConstant=50;
     timeouts.WriteTotalTimeoutMultiplier=10;
     if(!SetCommTimeouts(hSerial, &timeouts)){
-    //error occureed. Inform user
+        std::cout << "[!] SetCommTimeouts error." << std::endl;
     }
 
     while(true){
-        int n = 10;
+        int n = 50;
         char szBuff[n + 1] = {0};
         DWORD dwBytesRead = 0;
         if(!ReadFile(hSerial, szBuff, n, &dwBytesRead, NULL)){
-        //error occurred. Report to user.
+            std::cout << "[!] Nothing read." << std::endl;
         } else {
-            std::cout << "number of bytes read: "<< dwBytesRead << " string: "<< std::string(szBuff) << std::endl;
+            std::cout << "Number of bytes read: "<< dwBytesRead << "\n" << std::flush;
+            std::cout << "String: "<< std::string(szBuff) << "\n" << std::flush;
         }
-        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+        std::this_thread::sleep_for(std::chrono::milliseconds(200));
     }
 
 
