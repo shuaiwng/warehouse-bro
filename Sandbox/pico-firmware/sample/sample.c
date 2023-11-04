@@ -5,19 +5,17 @@
 
 const uint PIR_PIN = 15;
 const uint HEADLIGHT_PIN = 14;
-const uint HC_TRIG_PIN = 7;
-const uint HC_ECHO_PIN = 8;
+const uint HC_TRIG_PIN = 21;
+const uint HC_ECHO_PIN = 20;
 
 int timeout = 26100;
 
 int main()
 {
-
 	stdio_init_all();
-	sleep_ms(1000);
-    const uint LED_PIN = HEADLIGHT_PIN;
-    gpio_init(LED_PIN);
-    gpio_set_dir(LED_PIN, GPIO_OUT);
+	sleep_ms(100);
+    gpio_init(HEADLIGHT_PIN);
+    gpio_set_dir(HEADLIGHT_PIN, GPIO_OUT);
 
     gpio_init(PIR_PIN);
     gpio_set_dir(PIR_PIN, GPIO_IN);
@@ -28,30 +26,63 @@ int main()
     gpio_set_dir(HC_ECHO_PIN, GPIO_IN);
 
 
-    while(true){
-        if (gpio_get(PIR_PIN)){
-            printf("Object Detected!\n");
-            gpio_put(LED_PIN, 1);
-            sleep_ms(100);
-            gpio_put(LED_PIN, 0);
-            sleep_ms(100);
+    uint workflow = 2;
+    while(true)
+    {
+        // Surveillance workflow
+        if ( workflow == 1)
+        {
+            for(int i = 0; i < 10; i++){
+                if (gpio_get(PIR_PIN)){
+                    printf("Object detected! Turn on the Headlights...\n");
+                    gpio_put(HEADLIGHT_PIN, 1);
+                    sleep_ms(100);
+                    gpio_put(HEADLIGHT_PIN, 0);
+                    sleep_ms(100);
+                } else {
+                    printf("Factory remains still.\n");
+                    sleep_ms(1000);
+                }
+            }
         }
-        // HC measurement
-        gpio_put(HC_TRIG_PIN, 1);
-        sleep_us(1);
-        gpio_put(HC_TRIG_PIN, 0);
 
-        uint width = 0;
-        while(gpio_get(HC_ECHO_PIN) == 0){ tight_loop_contents(); }
-        while(gpio_get(HC_ECHO_PIN) == 1){
-            width++;
-            if (width > timeout) {
-                printf("HC bad measurement! \n");
-            };
+        // Operation workflow
+        if ( workflow == 2)
+        {
+            for(int i = 0; i < 10; i++){
+                gpio_put(HC_TRIG_PIN, 1);
+                sleep_us(1);
+                gpio_put(HC_TRIG_PIN, 0);
+
+                uint width = 0;
+                while(gpio_get(HC_ECHO_PIN) == 0){ tight_loop_contents(); }
+                while(gpio_get(HC_ECHO_PIN) == 1){
+                    width++;
+                    if (width > timeout) {
+                        printf("Bad measurement!\n");
+                        sleep_ms(100);
+                    };
+                }
+                float dist_cm = (float)width / 29 / 2;
+                printf("Distance in [CM]: %.3f\n", dist_cm);
+                sleep_ms(200);
+            }
         }
-        float dist_cm = (float)width / 29 / 2;
-        printf("Distance in [CM]: %.3f\n", dist_cm);
-        sleep_ms(100);
+
+        // Request command from the host
+        printf("[>>WKF<<]: work finished, what to do next?");
+        int retHostCmd = getchar_timeout_us(2000000);
+        if( (char)retHostCmd == '1' ){
+            printf("Start workflow: Surveillance ...\n");
+            workflow = 1;
+            sleep_ms(100);
+        }
+        else if ( (char)retHostCmd == '2' ){
+            printf("Start workflow: Operation ...\n");
+            workflow = 2;
+            sleep_ms(100);
+        }
+        sleep_ms(1000);
     }
     return 0;
 }

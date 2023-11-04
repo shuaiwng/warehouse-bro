@@ -44,23 +44,39 @@ int main(){
         std::cout << "[!] SetCommTimeouts error." << std::endl;
     }
 
+    u_int i_cmds = 2;
+    const char* cmds[2] = {"1", "2"};
     while(true){
-        int n = 50;
+        int n = 100;
         char szBuff[n + 1] = {0};
         DWORD dwBytesRead = 0;
         if(!ReadFile(hSerial, szBuff, n, &dwBytesRead, NULL)){
-            std::cout << "[!] Nothing read." << std::endl;
+            std::cout << "[!] Error with ReadFile." << std::endl;
         } else {
-            std::cout << "Number of bytes read: "<< dwBytesRead << "\n" << std::flush;
-            std::cout << "String: "<< std::string(szBuff) << "\n" << std::flush;
+            std::string strBuff = std::string(szBuff);
+            std::cout << "Number of bytes read: "<< dwBytesRead << "\nContent:\n---\n";
+            std::cout << strBuff << "\n";
+
+            // evaluate the request
+            std::string req;
+            if (strBuff.length() >= 9) {
+                if (strBuff.substr(0,3) == "[>>" && strBuff.substr(6,3) == "<<]"){
+                    req = strBuff.substr(3,3);
+                }
+            }
+            // write command to COM port
+            if (req == "WKF") {
+                i_cmds = 3 - i_cmds;
+                int m = 1;
+                DWORD dwBytesWritten = 0;
+                if(!WriteFile(hSerial, cmds[i_cmds-1], m, &dwBytesWritten, NULL)){
+                    std::cout << "[!] Error with WriteFile." << std::endl;
+                } else {
+                    std::cout << "CMD sent: "<< cmds[i_cmds-1] << std::endl;
+                }
+            }
         }
-        std::this_thread::sleep_for(std::chrono::milliseconds(200));
     }
 
-
-
-
 CloseHandle(hSerial);
-
-
 }
