@@ -1,5 +1,2 @@
-Sandbox/pc-serial-port/*.dll
-Sandbox/pc-serial-port/*.o
-Sandbox/pc-serial-port/*.exe
-
+Sandbox/pc-serial-port/build
 Sandbox/pico-firmware/build
