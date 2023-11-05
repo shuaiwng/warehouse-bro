@@ -2,6 +2,7 @@
 #include <chrono>
 #include <thread>
 #include <iostream>
+#include "camera/SVCamMiniSample.h"
 
 
 int main(){
@@ -66,13 +67,16 @@ int main(){
             }
             // write command to COM port
             if (req == "WKF") {
+                acquire_image();
+
                 i_cmds = 3 - i_cmds;
                 int m = 1;
                 DWORD dwBytesWritten = 0;
-                if(!WriteFile(hSerial, cmds[i_cmds-1], m, &dwBytesWritten, NULL)){
+                const char* cmd_send = cmds[i_cmds-1];
+                if(!WriteFile(hSerial, cmd_send, m, &dwBytesWritten, NULL)){
                     std::cout << "[!] Error with WriteFile." << std::endl;
                 } else {
-                    std::cout << "CMD sent: "<< cmds[i_cmds-1] << std::endl;
+                    std::cout << "CMD sent: "<< std::string(cmd_send) << std::endl;
                 }
             }
         }
