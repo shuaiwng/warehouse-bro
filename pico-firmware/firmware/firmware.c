@@ -71,18 +71,23 @@ int main()
             gpio_put(HC_TRIG_PIN, 0);
 
             uint width = 0;
+            bool b_valid = true;
             while(gpio_get(HC_ECHO_PIN) == 0){ tight_loop_contents(); }
             while(gpio_get(HC_ECHO_PIN) == 1){
                 width++;
                 if (width > timeout) {
+                    b_valid = false;
                     printf("[>>OWF0<<]");
-                    sleep_ms(100);
-                };
+                    break;
+                }
             }
-            float dist_cm = (float)width / 29 / 2;
-            printf("[>>OWF1<<] Distance in [CM]: %.3f\n", dist_cm);
+            if (b_valid){
+                float dist_cm = (float)width / 29 / 2;
+                printf("[>>OWF1<<] Distance in [CM]: %.3f\n", dist_cm);
+            }
             sleep_ms(200);
         }
+        
         sleep_ms(100);
     }
     return 0;
