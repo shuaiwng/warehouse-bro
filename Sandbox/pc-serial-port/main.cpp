@@ -45,8 +45,8 @@ int main(){
         std::cout << "[!] SetCommTimeouts error." << std::endl;
     }
 
-    u_int i_cmds = 2;
-    const char* cmds[2] = {"1", "2"};
+    int inc = 0;
+    const char* cmds[3] = {"0", "1", "2"};
     while(true){
         int n = 100;
         char szBuff[n + 1] = {0};
@@ -60,25 +60,24 @@ int main(){
 
             // evaluate the request
             std::string req;
-            if (strBuff.length() >= 9) {
-                if (strBuff.substr(0,3) == "[>>" && strBuff.substr(6,3) == "<<]"){
-                    req = strBuff.substr(3,3);
-                }
-            }
-            // write command to COM port
-            if (req == "WKF") {
-                acquire_image();
+            if (strBuff.length() >= 10) {
+                if (strBuff.substr(0,3) == "[>>" && strBuff.substr(7,3) == "<<]"){
+                    req = strBuff.substr(3,4);
 
-                i_cmds = 3 - i_cmds;
-                int m = 1;
-                DWORD dwBytesWritten = 0;
-                const char* cmd_send = cmds[i_cmds-1];
-                if(!WriteFile(hSerial, cmd_send, m, &dwBytesWritten, NULL)){
-                    std::cout << "[!] Error with WriteFile." << std::endl;
-                } else {
-                    std::cout << "CMD sent: "<< std::string(cmd_send) << std::endl;
+                    int m = 1;
+                    DWORD dwBytesWritten = 0;
+                    const char* cmd_send = cmds[inc%3];
+                    if(!WriteFile(hSerial, cmd_send, m, &dwBytesWritten, NULL)){
+                        std::cout << "[!] Error with WriteFile." << std::endl;
+                    } else {
+                        std::cout << "CMD sent: "<< std::string(cmd_send) << std::endl;
+                    }
                 }
             }
+
+            // acquire_image();
+
+            inc++;
         }
     }
 
