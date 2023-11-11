@@ -8,3 +8,8 @@ WbroCore::WbroCore(){
 const std::string WbroCore::getVersion(){
     return mVersion;
 }
+
+
+float WbroCore::multiply(float num1, float num2){
+    return num1 * num2;
+}

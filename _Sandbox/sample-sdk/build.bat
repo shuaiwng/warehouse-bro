@@ -17,4 +17,7 @@ set bin_std=libgcc_s_seh-1.dll,libstdc++-6.dll,libwinpthread-1.dll
 copy "%~dp0\build\src\wbrocore\libWbroCore.dll" %cd%
 copy "%~dp0\build\src\wbrodevice\libWbroDevice.dll" %cd%
 
+
+
+
 pause
