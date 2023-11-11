@@ -1,5 +1,6 @@
 #include <iostream>
 #include "gtest/gtest.h"
+#include "gmock/gmock.h"
 #include "wbrocore.h"
 #include "wbrodevice.h"
 
@@ -23,6 +24,15 @@ protected:
 TEST_F(CoreTest, calc_test){
     WbroCore core;
     EXPECT_NEAR(core.multiply(5.1, 3.0), 15.3, 0.001);
+}
+
+TEST_F(CoreTest, readpixel_test){
+    WbroCore core;
+    cv::Mat newImage = core.loadimage("../assets/sample.png");
+    std::vector<int> pixel = core.readpixel3(&newImage, 50, 50);
+
+    std::vector<int> vec_expected {110, 167, 206};
+    EXPECT_EQ(pixel, vec_expected);
 }
 
 TEST_F(DeviceTest, verify_signal){
