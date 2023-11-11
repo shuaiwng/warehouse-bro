@@ -15,7 +15,6 @@ set bin_std=libgcc_s_seh-1.dll,libstdc++-6.dll,libwinpthread-1.dll
         copy "%MINGW_PATH%\%%f" "%%f"
 		)
 
-copy "%~dp0\build\src\wbrocore\libWbroCore.dll" %cd%
 copy "%~dp0\build\src\wbrodevice\libWbroDevice.dll" %cd%
 
 set bin_cv=libopencv_core470.dll,libopencv_imgcodecs470.dll,libopencv_imgproc470.dll
