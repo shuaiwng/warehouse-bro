@@ -23,3 +23,5 @@ for %%f in (*.dll) do move "%%f" "build/"
 for %%f in (*.exe) do move "%%f" "build/"
 
 for %%f in (*.o) do del "%%f"
+
+pause

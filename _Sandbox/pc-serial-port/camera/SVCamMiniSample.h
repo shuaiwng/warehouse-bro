@@ -15,5 +15,5 @@ bool InitSDK();
 SVCamSystem * GetSVCamSystem(vector<SVCamSystem *> sv_cam_sys_list, char *tlid);
 Camera * GetCamera(SVCamSystem* svcam, char* id);
 
-void acquire_image();
+void acquire_image(double expTime_ns);
 

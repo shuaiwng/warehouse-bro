@@ -327,29 +327,17 @@ Camera * GetCamera(SVCamSystem* svcam, char* id)
 }
 
 
-void acquire_image()
+void acquire_image(double expTime_ns)
 {
-    //1)************************Initialisation*******************************************************
-    
-	// load dlls and initialize device modules
-	printf("Initialisation...\n");
 	bool bInitSuccessful = InitSDK();
-    if (!bInitSuccessful)
-    {
-        printf(":%s InitSDK Failed!\n", __FUNCTION__);
-        system("pause");
-    }
 
-    //2)************************Device discovery and enumeration************************************
-
-	printf("Device discovery and enumeration...\n");
 	SV_RETURN ret = SV_ERROR_SUCCESS;
-    uint32_t tlCount = 0;
-	bool State = false;
     vector<SV_DEVICE_INFO *> devInfoList;
     vector<char *> tlIDList;
     vector<SVCamSystem *> svCamSysList;
-	SVLibSystemGetCount(&tlCount);
+    uint32_t tlCount = 0;
+    SVLibSystemGetCount(&tlCount);
+
     int index = 0;
     for (uint32_t i = 0; i < tlCount; i++)
     {
@@ -368,10 +356,6 @@ void acquire_image()
 				SV_DEVICE_INFO * devInfo = new_svcam->devInfoList.at(j);
 				tlIDList.push_back(new_svcam->sv_tl_inf.id);
 				devInfoList.push_back(devInfo);
-				printf("Camera Index:%d", index);
-				printf("  %s", new_svcam->sv_tl_inf.displayName);
-				printf("  %s", devInfo->model);
-				printf("  SN: %s\n", devInfo->serialNumber);
 				index++;
             }
         }
@@ -382,93 +366,35 @@ void acquire_image()
         }
     }
 
-    int idx_cam = 0;
 	SVCamSystem *sv_cam = NULL;
 	SV_DEVICE_INFO* devinf = NULL;
-	sv_cam = GetSVCamSystem(svCamSysList, tlIDList.at(idx_cam));
-    devinf = devInfoList.at(idx_cam);
-
-    //3)************************open camera device**************************************************
+	sv_cam = GetSVCamSystem(svCamSysList, tlIDList.at(0));
+    devinf = devInfoList.at(0);
     
-    printf("open camera device...\n");
-    //If device is successfully opened a new camera will be stored in a sv_cam_list.
     sv_cam->openDevice(*devinf);
     Camera *cam = NULL;
     cam = GetCamera(sv_cam, devinf->uid);
-    if (cam == NULL)
-    {
-        printf("opening camera device failed !! \n");
-    }
-
-    //************************Display Camera info****************************************************
 
     PrintDevInfo(*devinf);
-
-    //************************Display Camera feature info********************************************
-    
     cam->sv_cam_feature->getDeviceFeatureList(SV_Beginner);
     if (cam->sv_cam_feature->featureInfolist.size() != 0)
         PrintFeatureInfo(cam->sv_cam_feature->featureInfolist);
 
-    //************************Use feature to configure camera****************************************
-
-    // set Trigger Mode to Software Trigger
     SV_FEATURE_HANDLE hFeature = NULL;
     SVFeatureGetByName(cam->sv_cam_acq->hRemoteDev, "TriggerMode", &hFeature);
     SVFeatureSetValueInt64Enum(cam->sv_cam_acq->hRemoteDev, hFeature, 1);
 
-    // set Exposure time to 10 ms.
     hFeature = NULL;
     SVFeatureGetByName(cam->sv_cam_acq->hRemoteDev, "ExposureTime", &hFeature);
-    SVFeatureSetValueFloat(cam->sv_cam_acq->hRemoteDev, hFeature, 10000); // (10 ms)
-
-    //4)************************open streaming channel and start acquisition (not for camera link)**
+    SVFeatureSetValueFloat(cam->sv_cam_acq->hRemoteDev, hFeature, expTime_ns);
 
     printf("open streaming channel and start acquisition...\n");
-    unsigned int bufcount = 4;
+    unsigned int bufcount = 1;
     cam->sv_cam_acq->AcquisitionStart(bufcount);
 
     // start acquisition Thread
-    HANDLE acquisitionThread = CreateThread(NULL, 0, AcquisitionThread, (void *)sv_cam->sv_cam_list.front()->sv_cam_acq, 0, NULL);
+    // HANDLE acquisitionThread = CreateThread(NULL, 0, AcquisitionThread, (void *)sv_cam->sv_cam_list.front()->sv_cam_acq, 0, NULL);
 
-    /*
-    // demonstration for Event (only  for GigE )
-    SV_EVENT_HANDLE hDeviceConnectionEvent = DeviceEventRegister(cam->hDevice, SV_EVENT_DEVICE_CONNECTION);
-    SV_EVENT_HANDLE hDeviceRemoteDeviceEvent = DeviceEventRegister(cam->hDevice, SV_EVENT_REMOTE_DEVICE);
-    SV_EVENT_HANDLE hDeviceConnection = StreamEventsRegister(cam->sv_cam_acq->hDS );
-    */
-
-    // demo for External Trigger:
-    /*
-    #define lineSelector_Trigger           "Line6"
-    #define LineSource_Input1              "Input1"
-    #define LineSource_Input2              "Input2"
-    #define LineSource_Input3              "Input3"
-    #define  LineSelector "LineSelector"
-    #define  LineSource   "LineSource"
-    hFeature = NULL;
-    SVFeatureGetByName(cam->sv_cam_acq->hRemoteDev, "TriggerSource", &hFeature); // set Trigger source to Line1
-    SVFeatureSetValueEnum(cam->sv_cam_acq->hRemoteDev, hFeature, "Line1" );
-
-    hFeature = NULL;
-    SVFeatureGetByName(cam->sv_cam_acq->hRemoteDev, "ExposureMode", &hFeature); // set ExposureMode to Timed or Triggerwidth
-    SVFeatureSetValueEnum(cam->sv_cam_acq->hRemoteDev, hFeature, "Timed");
-
-    hFeature = NULL;
-    SVFeatureGetByName(cam->sv_cam_acq->hRemoteDev, "TriggerMode", &hFeature); // set TriggerMode to ON.
-    SVFeatureSetValueEnum(cam->sv_cam_acq->hRemoteDev, hFeature, "ON" );
-
-
-    hFeature = NULL;
-    SVFeatureGetByName(cam->sv_cam_acq->hRemoteDev, LineSelector, &hFeature);
-    SVFeatureSetValueEnum(cam->sv_cam_acq->hRemoteDev, hFeature, lineSelector_Trigger); // select lineSelector_Trigger
-
-    hFeature = NULL;
-    SVFeatureGetByName(cam->sv_cam_acq->hRemoteDev, LineSource, &hFeature);
-    SVFeatureSetValueEnum(cam->sv_cam_acq->hRemoteDev, hFeature, LineSource_Input1); // select  LineSource
-    */
-
-    // grab images (software Trigger).
     hFeature = NULL;
     UINT32 timeOut = 1000;
     SVFeatureGetByName(cam->sv_cam_acq->hRemoteDev, "TriggerSoftware", &hFeature);
@@ -479,6 +405,10 @@ void acquire_image()
         printf("----------------------------------\n");
         SVFeatureCommandExecute(cam->sv_cam_acq->hRemoteDev, hFeature, timeOut);
         printf("Trigger %-10d \n", i + 1);
+        Sleep(int(expTime_ns/1000 + 100));
+
+        const char* filename = "new_image.png";
+        ret = SVUtilSaveImageToFile(*(cam->sv_cam_acq->imageBufferInfo.front()), filename, SV_IMAGE_FILE_PNG);
         Sleep(500);
     }
 

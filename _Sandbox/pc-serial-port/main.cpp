@@ -75,7 +75,7 @@ int main(){
                 }
             }
 
-            // acquire_image();
+            acquire_image(500000);
 
             inc++;
         }
