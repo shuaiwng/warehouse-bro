@@ -1,3 +1,8 @@
+/**
+ * @file wbrocore.h
+ * @brief Defines SDK Core functions.
+ */
+
 #include <string>
 #include <iostream>
 #include "opencv2/highgui/highgui.hpp"

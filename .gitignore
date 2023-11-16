@@ -1,4 +1,9 @@
+# ignore sandbox
 _Sandbox/pc-serial-port/build
 
+# ignore build folders
 pico-firmware/build
 wbro-sdk/build
+
+# ignore doxygen folder
+html

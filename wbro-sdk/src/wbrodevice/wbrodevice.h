@@ -1,3 +1,9 @@
+/**
+ * @file wbrodevice.h
+ * @brief Defines SDK Device functions.
+ */
+
+
 #include <string>
 #include <iostream>
 
