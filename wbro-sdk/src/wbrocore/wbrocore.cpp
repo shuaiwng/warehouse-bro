@@ -5,17 +5,17 @@ WbroCore::WbroCore(){
     std::cout << "Core initialized." << std::endl;
 }
 
-const std::string WbroCore::getVersion(){
+const std::string WbroCore::Wbro_getVersion(){
     return mVersion;
 }
 
 
-cv::Mat WbroCore::loadimage(const std::string path){
+cv::Mat WbroCore::Wbro_loadimage(const std::string path){
    return cv::imread(path, cv::IMREAD_COLOR);
 }
 
 
-std::vector<int> WbroCore::readpixel3(cv::Mat *img, int pos_x, int pos_y){
+std::vector<int> WbroCore::Wbro_readpixel3(cv::Mat *img, int pos_x, int pos_y){
     std::vector<int> vec;
     cv::Vec3b pixel = img->at<cv::Vec3b>(pos_x, pos_y);
     for (int i = 0; i < 3; i++){
