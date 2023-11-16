@@ -9,7 +9,6 @@ class WbroCore{
 public:
     WbroCore();
     const std::string getVersion();
-    float multiply(float num1, float num2);
 
     cv::Mat loadimage(const std::string path);
     std::vector<int> readpixel3(cv::Mat *img, int pos_x, int pos_y);

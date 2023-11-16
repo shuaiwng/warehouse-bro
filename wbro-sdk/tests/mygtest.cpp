@@ -21,11 +21,6 @@ protected:
 };
 
 
-TEST_F(CoreTest, calc_test){
-    WbroCore core;
-    EXPECT_NEAR(core.multiply(5.1, 3.0), 15.3, 0.001);
-}
-
 TEST_F(CoreTest, readpixel_test){
     WbroCore core;
     cv::Mat newImage = core.loadimage("../assets/sample.png");

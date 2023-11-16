@@ -10,11 +10,6 @@ const std::string WbroCore::getVersion(){
 }
 
 
-float WbroCore::multiply(float num1, float num2){
-    return num1 * num2;
-}
-
-
 cv::Mat WbroCore::loadimage(const std::string path){
    return cv::imread(path, cv::IMREAD_COLOR);
 }
