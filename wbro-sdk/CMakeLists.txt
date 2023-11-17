@@ -8,6 +8,7 @@ project(
 
 SET(GTEST_DIR "C:/Home/Tools/googletest-1.14.0")
 SET(OPENCV_DIR "C:/Home/Tools/opencv/build")
+SET(SVSCAM_DIR "C:/Program Files/SVS-VISTEK GmbH/SVCam Kit/SDK")
 
 add_executable(MyTest ${SOURCE_FILES} tests/mygtest.cpp)
 
@@ -18,11 +19,14 @@ include_directories(
     ${GTEST_DIR}/googlemock/include
     ${OPENCV_DIR}/include
 )
+include_directories(${SVSCAM_DIR}/include)
+include_directories(src/wbrodevice/svscam)
 
 add_subdirectory(src/wbrocore)
 add_subdirectory(src/wbrodevice)
 
-target_link_libraries(MyTest WbroCore WbroDevice)
+target_link_libraries(MyTest WbroCore WbroDevice ${SVSCAM_DIR}/bin/SVGenSDK64.dll)
+
 target_link_libraries(MyTest 
     ${GTEST_DIR}/lib/libgtest.a
     ${GTEST_DIR}/lib/libgmock.a

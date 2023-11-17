@@ -1,8 +1,26 @@
 #include "wbrodevice.h"
 
-WbroDevice::WbroDevice(){
-    std::cout << "Device initialized." << std::endl;
+WbroDevice::WbroDevice(){}
+
+ERR_DEVICE WbroDevice::Wbro_Dev_Cam_init(){
+    bool b_init = InitSDK();
+    if (b_init){
+        return ERR_SUCCESS;
+    } else {
+        return ERR_CMD_CAM_INIT;
+    }
 }
+
+ERR_DEVICE WbroDevice::Wbro_Dev_Cam_discover(std::vector<SV_DEVICE_INFO *>& devInfoList, std::vector<char *>& tlIDList, std::vector<SVCamSystem *>& svCamSysList){
+    bool b_discover = svcam_discover(devInfoList, tlIDList, svCamSysList);
+    if (b_discover){
+        return ERR_SUCCESS;
+    } else {
+        return ERR_CMD_CAM_INIT;
+    }
+}
+
+
 
 
 ERR_DEVICE WbroDevice::Wbro_Dev_ConnectToCom(const std::string com_port){

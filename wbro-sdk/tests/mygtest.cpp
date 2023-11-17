@@ -50,6 +50,11 @@ TEST_F(DeviceTest, test_read_signal){
 }
 
 
+TEST_F(DeviceTest, test_camera){
+    err_device = device.Wbro_Dev_Cam_init();
+    EXPECT_EQ(err_device, ERR_SUCCESS);
+}
+
 int main(int argc, char **argv){
     testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
