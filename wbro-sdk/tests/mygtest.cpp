@@ -17,13 +17,22 @@ class DeviceTest : public testing::Test {
 protected:
     WbroDevice device;
     ERR_DEVICE err_device;
+
+    std::vector<SV_DEVICE_INFO *> devInfoList;
+    std::vector<SVCamSystem *> svCamSysList;
+    std::vector<char *> tlIDList;
+
     DeviceTest() {}
     ~DeviceTest() override {}
     void SetUp() override {
         err_device = device.Wbro_Dev_ConnectToCom("COM3");
+        
+        err_device = device.Wbro_Dev_Cam_disconnect(devInfoList, svCamSysList, tlIDList);
+        err_device = device.Wbro_Dev_Cam_init();
     }
     void TearDown() override {
         err_device = device.Wbro_Dev_DisconnectCom();
+        err_device = device.Wbro_Dev_Cam_disconnect(devInfoList, svCamSysList, tlIDList);
     }
 };
 
@@ -51,8 +60,23 @@ TEST_F(DeviceTest, test_read_signal){
 
 
 TEST_F(DeviceTest, test_camera){
-    err_device = device.Wbro_Dev_Cam_init();
-    EXPECT_EQ(err_device, ERR_SUCCESS);
+
+    ERR_DEVICE b_discover = device.Wbro_Dev_Cam_discover(devInfoList, svCamSysList, tlIDList);
+    EXPECT_EQ(b_discover, ERR_SUCCESS);
+
+    Camera* cam;
+    ERR_DEVICE b_connect = device.Wbro_Dev_Cam_connect(devInfoList, svCamSysList, tlIDList, cam);
+    EXPECT_EQ(b_connect, ERR_SUCCESS);
+
+    ERR_DEVICE b_set = device.Wbro_Dev_Cam_setParam(cam, 1000000); // 1s
+    EXPECT_EQ(b_set, ERR_SUCCESS);
+
+    ERR_DEVICE b_meas = device.Wbro_Dev_Cam_take_image(cam, 1000000); // 1s
+    EXPECT_EQ(b_meas, ERR_SUCCESS);
+
+    std::string filename = "saved_image.png";
+    ERR_DEVICE b_save = device.Wbro_Dev_Cam_save_image(cam, filename.c_str());
+    EXPECT_EQ(b_save, ERR_SUCCESS);
 }
 
 int main(int argc, char **argv){

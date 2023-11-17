@@ -16,7 +16,13 @@ enum ERR_DEVICE{
     ERR_COM_SETTIMEOUT,
     ERR_COM_CLOSEHANDLE,
     ERR_CMD_READSIG,
-    ERR_CMD_CAM_INIT
+    ERR_CMD_CAM_INIT,
+    ERR_CMD_CAM_DISCOVER,
+    ERR_CMD_CAM_CONN,
+    ERR_CMD_CAM_DISCONN,
+    ERR_CMD_CAM_SETPARAM,
+    ERR_CMD_CAM_MEASURE,
+    ERR_CMD_CAM_SAVEIMAGE
 };
 
 class WbroDevice{
@@ -29,7 +35,13 @@ public:
     ERR_DEVICE Wbro_Dev_ReadSignal(int szbuf, std::string& sig, DWORD& c_sig);
     
     ERR_DEVICE Wbro_Dev_Cam_init();
-    ERR_DEVICE Wbro_Dev_Cam_discover(std::vector<SV_DEVICE_INFO *>&, std::vector<char *>&, std::vector<SVCamSystem *>&);
+    ERR_DEVICE Wbro_Dev_Cam_discover(std::vector<SV_DEVICE_INFO *>&, std::vector<SVCamSystem *>&, std::vector<char *>&);
+    ERR_DEVICE Wbro_Dev_Cam_connect(std::vector<SV_DEVICE_INFO *>, std::vector<SVCamSystem *>, std::vector<char *>, Camera*&);
+    ERR_DEVICE Wbro_Dev_Cam_disconnect(std::vector<SV_DEVICE_INFO *>, std::vector<SVCamSystem *>, std::vector<char *>);
+    
+    ERR_DEVICE Wbro_Dev_Cam_setParam(Camera* cam, int expTime_ns);
+    ERR_DEVICE Wbro_Dev_Cam_take_image(Camera* cam, int expTime_ns);
+    ERR_DEVICE Wbro_Dev_Cam_save_image(Camera* cam, const char* img_name);
 
 
 private:
@@ -37,4 +49,5 @@ private:
     std::vector<SV_DEVICE_INFO *> devInfoList;
     std::vector<SVCamSystem *> svCamSysList;
     std::vector<char *> tlIDList;
+    Camera * cam;
 };

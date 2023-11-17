@@ -11,17 +11,60 @@ ERR_DEVICE WbroDevice::Wbro_Dev_Cam_init(){
     }
 }
 
-ERR_DEVICE WbroDevice::Wbro_Dev_Cam_discover(std::vector<SV_DEVICE_INFO *>& devInfoList, std::vector<char *>& tlIDList, std::vector<SVCamSystem *>& svCamSysList){
-    bool b_discover = svcam_discover(devInfoList, tlIDList, svCamSysList);
+ERR_DEVICE WbroDevice::Wbro_Dev_Cam_discover(std::vector<SV_DEVICE_INFO *>& devInfoList, std::vector<SVCamSystem *>& svCamSysList, std::vector<char *>& tlIDList){
+    bool b_discover = svcam_discover(devInfoList, svCamSysList, tlIDList);
     if (b_discover){
         return ERR_SUCCESS;
     } else {
-        return ERR_CMD_CAM_INIT;
+        return ERR_CMD_CAM_DISCOVER;
+    }
+}
+
+ERR_DEVICE WbroDevice::Wbro_Dev_Cam_connect(std::vector<SV_DEVICE_INFO *> devInfoList, std::vector<SVCamSystem *> svCamSysList, std::vector<char *> tlIDList, Camera*& cam){
+    bool b_connect = svcam_connect(devInfoList, svCamSysList, tlIDList, cam);
+    if (b_connect){
+        return ERR_SUCCESS;
+    } else {
+        return ERR_CMD_CAM_CONN;
+    }
+}
+
+ERR_DEVICE WbroDevice::Wbro_Dev_Cam_disconnect(std::vector<SV_DEVICE_INFO *> devInfoList, std::vector<SVCamSystem *> svCamSysList, std::vector<char *> tlIDList){
+    bool b_disconnect = svcam_disconnect(devInfoList, svCamSysList, tlIDList);
+    if (b_disconnect){
+        return ERR_SUCCESS;
+    } else {
+        return ERR_CMD_CAM_DISCONN;
     }
 }
 
 
+ERR_DEVICE WbroDevice::Wbro_Dev_Cam_setParam(Camera* cam, int expTime_ns){
+    bool b_set = svcam_set_parameter(cam, expTime_ns);
+    if (b_set){
+        return ERR_SUCCESS;
+    } else {
+        return ERR_CMD_CAM_SETPARAM;
+    }
+}
 
+ERR_DEVICE WbroDevice::Wbro_Dev_Cam_take_image(Camera* cam, int expTime_ns){
+    bool b_meas = svcam_aquire_image(cam, expTime_ns);
+    if (b_meas){
+        return ERR_SUCCESS;
+    } else {
+        return ERR_CMD_CAM_MEASURE;
+    }
+}
+
+ERR_DEVICE WbroDevice::Wbro_Dev_Cam_save_image(Camera* cam, const char* img_name){
+    bool b_save = svcam_save_image(cam, img_name);
+    if (b_save){
+        return ERR_SUCCESS;
+    } else {
+        return ERR_CMD_CAM_SAVEIMAGE;
+    }
+}
 
 ERR_DEVICE WbroDevice::Wbro_Dev_ConnectToCom(const std::string com_port){
     hSerial = CreateFile(com_port.c_str(),

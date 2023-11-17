@@ -326,7 +326,7 @@ Camera * GetCamera(SVCamSystem* svcam, char* id)
     return NULL;
 }
 
-bool svcam_discover(vector<SV_DEVICE_INFO *>& devInfoList, vector<char *>& tlIDList, vector<SVCamSystem *>& svCamSysList){
+bool svcam_discover(vector<SV_DEVICE_INFO *>& devInfoList, vector<SVCamSystem *>& svCamSysList, vector<char *>& tlIDList){
     SV_RETURN ret = SV_ERROR_SUCCESS;
     uint32_t tlCount = 0;
     SVLibSystemGetCount(&tlCount);
@@ -365,7 +365,7 @@ bool svcam_discover(vector<SV_DEVICE_INFO *>& devInfoList, vector<char *>& tlIDL
     }
 }
 
-bool svcam_connect(vector<SV_DEVICE_INFO *> devInfoList, vector<SVCamSystem *> svCamSysList, vector<char *> tlIDList, Camera* cam){
+bool svcam_connect(vector<SV_DEVICE_INFO *> devInfoList, vector<SVCamSystem *> svCamSysList, vector<char *> tlIDList, Camera*& cam){
     SVCamSystem *sv_cam = NULL;
 	SV_DEVICE_INFO* devinf = NULL;
 	sv_cam = GetSVCamSystem(svCamSysList, tlIDList.at(0));
