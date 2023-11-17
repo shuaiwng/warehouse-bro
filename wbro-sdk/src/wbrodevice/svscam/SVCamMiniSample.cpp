@@ -249,7 +249,7 @@ void StreamEventsUnregister(SV_STREAM_HANDLE hDS, SV_EVENT_HANDLE hEvent)
         printf("SVEventRegister SVEventKill Failed! %d\n", ret);
 }
 
-bool InitSDK()
+bool svcam_init_sdk()
 {
     string ctiPath;
     string genicamPath;
@@ -433,7 +433,11 @@ bool svcam_disconnect(vector<SV_DEVICE_INFO *> devInfoList, vector<SVCamSystem *
 	if (!svCamSysList.empty())
 		DSDeleteContainer(svCamSysList);
 
-    printf("Close the library and free all the allocated resources.\n");
+    return true;
+}
+
+bool svcam_close_sdk(){
+    printf("Close the library.\n");
     SV_RETURN ret = SVLibClose();
     if (SV_ERROR_SUCCESS != ret){
         return false;

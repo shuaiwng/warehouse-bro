@@ -25,14 +25,12 @@ protected:
     DeviceTest() {}
     ~DeviceTest() override {}
     void SetUp() override {
-        err_device = device.Wbro_Dev_ConnectToCom("COM3");
-        
-        err_device = device.Wbro_Dev_Cam_disconnect(devInfoList, svCamSysList, tlIDList);
+        err_device = device.Wbro_Dev_ConnectToCom("COM3");        
         err_device = device.Wbro_Dev_Cam_init();
     }
     void TearDown() override {
         err_device = device.Wbro_Dev_DisconnectCom();
-        err_device = device.Wbro_Dev_Cam_disconnect(devInfoList, svCamSysList, tlIDList);
+        err_device = device.Wbro_Dev_Cam_close();
     }
 };
 
@@ -77,6 +75,9 @@ TEST_F(DeviceTest, test_camera){
     std::string filename = "saved_image.png";
     ERR_DEVICE b_save = device.Wbro_Dev_Cam_save_image(cam, filename.c_str());
     EXPECT_EQ(b_save, ERR_SUCCESS);
+
+    ERR_DEVICE b_disconnect = device.Wbro_Dev_Cam_disconnect(devInfoList, svCamSysList, tlIDList);
+    EXPECT_EQ(b_disconnect, ERR_SUCCESS);
 }
 
 int main(int argc, char **argv){

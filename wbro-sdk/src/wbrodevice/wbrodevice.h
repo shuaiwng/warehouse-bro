@@ -17,6 +17,7 @@ enum ERR_DEVICE{
     ERR_COM_CLOSEHANDLE,
     ERR_CMD_READSIG,
     ERR_CMD_CAM_INIT,
+    ERR_CMD_CAM_CLOSE,
     ERR_CMD_CAM_DISCOVER,
     ERR_CMD_CAM_CONN,
     ERR_CMD_CAM_DISCONN,
@@ -35,10 +36,12 @@ public:
     ERR_DEVICE Wbro_Dev_ReadSignal(int szbuf, std::string& sig, DWORD& c_sig);
     
     ERR_DEVICE Wbro_Dev_Cam_init();
+    ERR_DEVICE Wbro_Dev_Cam_close();
+
     ERR_DEVICE Wbro_Dev_Cam_discover(std::vector<SV_DEVICE_INFO *>&, std::vector<SVCamSystem *>&, std::vector<char *>&);
     ERR_DEVICE Wbro_Dev_Cam_connect(std::vector<SV_DEVICE_INFO *>, std::vector<SVCamSystem *>, std::vector<char *>, Camera*&);
     ERR_DEVICE Wbro_Dev_Cam_disconnect(std::vector<SV_DEVICE_INFO *>, std::vector<SVCamSystem *>, std::vector<char *>);
-    
+
     ERR_DEVICE Wbro_Dev_Cam_setParam(Camera* cam, int expTime_ns);
     ERR_DEVICE Wbro_Dev_Cam_take_image(Camera* cam, int expTime_ns);
     ERR_DEVICE Wbro_Dev_Cam_save_image(Camera* cam, const char* img_name);

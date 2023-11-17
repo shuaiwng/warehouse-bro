@@ -3,11 +3,20 @@
 WbroDevice::WbroDevice(){}
 
 ERR_DEVICE WbroDevice::Wbro_Dev_Cam_init(){
-    bool b_init = InitSDK();
+    bool b_init = svcam_init_sdk();
     if (b_init){
         return ERR_SUCCESS;
     } else {
         return ERR_CMD_CAM_INIT;
+    }
+}
+
+ERR_DEVICE WbroDevice::Wbro_Dev_Cam_close(){
+    bool b_close = svcam_close_sdk();
+    if (b_close){
+        return ERR_SUCCESS;
+    } else {
+        return ERR_CMD_CAM_CLOSE;
     }
 }
 
