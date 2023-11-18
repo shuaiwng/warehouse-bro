@@ -132,7 +132,6 @@ ERR_DEVICE WbroDevice::Wbro_Dev_uC_send_to(const char * cmd_send){
 }
 
 
-
 ERR_DEVICE WbroDevice::Wbro_Dev_uC_read_from(std::string& sig, DWORD& c_sig){
     char buff[SZ_BUFF + 1] = {0};
     if(!ReadFile(hSerial, buff, SZ_BUFF, &c_sig, NULL)){
