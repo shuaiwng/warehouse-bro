@@ -3,7 +3,7 @@
  * @brief Defines SDK Device functions.
  */
 
-#include "SVCamMiniSample.h"
+#include "svscam/SVCamMiniSample.h"
 #include <windows.h>
 #include <string>
 #include <iostream>

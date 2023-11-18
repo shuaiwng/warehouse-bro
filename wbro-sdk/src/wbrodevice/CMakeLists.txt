@@ -1,4 +1,4 @@
 
-file(GLOB SOURCE_FILES wbrodevice.cpp wbrodevice.h svscam/*.h svscam/*.cpp ${SVSCAM_DIR}/include/sv_gen_sdk.h)
+file(GLOB SOURCE_FILES wbrodevice.cpp svscam/*.cpp)
 
 add_library(WbroDevice STATIC ${SOURCE_FILES})

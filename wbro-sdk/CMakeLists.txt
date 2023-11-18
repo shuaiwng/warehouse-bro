@@ -20,12 +20,12 @@ include_directories(
     ${OPENCV_DIR}/include
 )
 include_directories(${SVSCAM_DIR}/include)
-include_directories(src/wbrodevice/svscam)
 
 add_subdirectory(src/wbrocore)
 add_subdirectory(src/wbrodevice)
 
-target_link_libraries(MyTest WbroCore WbroDevice ${SVSCAM_DIR}/bin/SVGenSDK64.dll)
+target_link_libraries(MyTest ${SVSCAM_DIR}/bin/SVGenSDK64.dll)
+target_link_libraries(MyTest WbroCore WbroDevice)
 
 target_link_libraries(MyTest 
     ${GTEST_DIR}/lib/libgtest.a
@@ -36,5 +36,3 @@ target_link_libraries(MyTest
     ${OPENCV_DIR}/lib/libopencv_highgui470.dll.a
     ${OPENCV_DIR}/lib/libopencv_imgcodecs470.dll.a 
 )
-
-
