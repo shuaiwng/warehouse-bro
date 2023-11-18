@@ -3,7 +3,7 @@
  * @brief Defines SDK Device functions.
  */
 
-#include "svscam/SVCamMiniSample.h"
+#include "svcam/SVCamMiniSample.h"
 #include <windows.h>
 #include <string>
 #include <iostream>
@@ -29,8 +29,7 @@ enum ERR_DEVICE{
 class WbroDevice{
 public:
     WbroDevice();
-    ERR_DEVICE init();
-    ERR_DEVICE discover_device();
+
     ERR_DEVICE Wbro_Dev_ConnectToCom(const std::string com_port);
     ERR_DEVICE Wbro_Dev_DisconnectCom();
     ERR_DEVICE Wbro_Dev_ReadSignal(int szbuf, std::string& sig, DWORD& c_sig);
