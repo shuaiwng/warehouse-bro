@@ -7,7 +7,7 @@ ERR_DEVICE WbroDevice::Wbro_Dev_Cam_init(){
     if (b_init){
         return ERR_SUCCESS;
     } else {
-        return ERR_CMD_CAM_INIT;
+        return ERR_CAM_INIT;
     }
 }
 
@@ -16,7 +16,7 @@ ERR_DEVICE WbroDevice::Wbro_Dev_Cam_close(){
     if (b_close){
         return ERR_SUCCESS;
     } else {
-        return ERR_CMD_CAM_CLOSE;
+        return ERR_CAM_CLOSE;
     }
 }
 
@@ -25,7 +25,7 @@ ERR_DEVICE WbroDevice::Wbro_Dev_Cam_discover(std::vector<SV_DEVICE_INFO *>& devI
     if (b_discover){
         return ERR_SUCCESS;
     } else {
-        return ERR_CMD_CAM_DISCOVER;
+        return ERR_CAM_DISCOVER;
     }
 }
 
@@ -34,7 +34,7 @@ ERR_DEVICE WbroDevice::Wbro_Dev_Cam_connect(std::vector<SV_DEVICE_INFO *> devInf
     if (b_connect){
         return ERR_SUCCESS;
     } else {
-        return ERR_CMD_CAM_CONN;
+        return ERR_CAM_CONN;
     }
 }
 
@@ -43,7 +43,7 @@ ERR_DEVICE WbroDevice::Wbro_Dev_Cam_disconnect(std::vector<SV_DEVICE_INFO *> dev
     if (b_disconnect){
         return ERR_SUCCESS;
     } else {
-        return ERR_CMD_CAM_DISCONN;
+        return ERR_CAM_DISCONN;
     }
 }
 
@@ -54,7 +54,7 @@ ERR_DEVICE WbroDevice::Wbro_Dev_Cam_setParam(Camera* cam, int expTime_ns){
     if (b_set){
         return ERR_SUCCESS;
     } else {
-        return ERR_CMD_CAM_SETPARAM;
+        return ERR_CAM_SETPARAM;
     }
 }
 
@@ -63,7 +63,7 @@ ERR_DEVICE WbroDevice::Wbro_Dev_Cam_take_image(Camera* cam){
     if (b_meas){
         return ERR_SUCCESS;
     } else {
-        return ERR_CMD_CAM_MEASURE;
+        return ERR_CAM_MEASURE;
     }
 }
 
@@ -72,11 +72,11 @@ ERR_DEVICE WbroDevice::Wbro_Dev_Cam_save_image(Camera* cam, const char* img_name
     if (b_save){
         return ERR_SUCCESS;
     } else {
-        return ERR_CMD_CAM_SAVEIMAGE;
+        return ERR_CAM_SAVEIMAGE;
     }
 }
 
-ERR_DEVICE WbroDevice::Wbro_Dev_ConnectToCom(const std::string com_port){
+ERR_DEVICE WbroDevice::Wbro_Dev_Com_connect(const std::string com_port){
     hSerial = CreateFile(com_port.c_str(),
         GENERIC_READ | GENERIC_WRITE,
         0,
@@ -113,7 +113,7 @@ ERR_DEVICE WbroDevice::Wbro_Dev_ConnectToCom(const std::string com_port){
 }
 
 
-ERR_DEVICE WbroDevice::Wbro_Dev_DisconnectCom(){
+ERR_DEVICE WbroDevice::Wbro_Dev_Com_disconnect(){
     if(CloseHandle(hSerial)){
         return ERR_SUCCESS;
     } else {
@@ -122,13 +122,63 @@ ERR_DEVICE WbroDevice::Wbro_Dev_DisconnectCom(){
 }
 
 
-ERR_DEVICE WbroDevice::Wbro_Dev_ReadSignal(int szbuf, std::string& sig, DWORD& c_sig){
-    char buff[szbuf + 1] = {0};
-    if(!ReadFile(hSerial, buff, szbuf, &c_sig, NULL)){
-        return ERR_CMD_READSIG;
+ERR_DEVICE WbroDevice::Wbro_Dev_uC_send_to(const char * cmd_send){
+    DWORD dwBytesWritten = 0;
+    if(!WriteFile(hSerial, cmd_send, 1, &dwBytesWritten, NULL)){
+        return ERR_UC_SENDTO;
+    } else {
+        return ERR_SUCCESS;
+    }
+}
+
+
+
+ERR_DEVICE WbroDevice::Wbro_Dev_uC_read_from(std::string& sig, DWORD& c_sig){
+    char buff[SZ_BUFF + 1] = {0};
+    if(!ReadFile(hSerial, buff, SZ_BUFF, &c_sig, NULL)){
+        return ERR_UC_READSIG;
     } else {
         sig = std::string(buff);
         return ERR_SUCCESS;
     }
 }
 
+
+ERR_DEVICE WbroDevice::Wbro_Dev_uC_getInfo(std::string sig, ucInfo_t & info){
+    info.mode = M_INVALID;
+
+    if (sig.length() < 10){
+        return ERR_SUCCESS;
+    }
+
+    std::string res;
+    if (sig.substr(0,3) == "[>>" && sig.substr(7,3) == "<<]"){
+        res = sig.substr(3,3);
+        if (res == "STB") {
+            info.mode = M_STANDBY;
+        } 
+        else if (res == "SWF"){
+            info.mode = M_SURVEILLANCE;
+        }
+        else if (res == "OWF"){
+            info.mode = M_OPERATION;
+
+            if (sig.substr(10,1) == "(" && sig.length() >= 13){
+                size_t pos_found = sig.find_first_of(')');
+                if (string::npos == pos_found){
+                    return ERR_UC_GETINFO;
+                }
+                info.distance = std::stof(sig.substr(11, pos_found-11));
+            } else {
+                return ERR_UC_GETINFO;
+            } 
+        }
+        else {
+            return ERR_UC_GETINFO;
+        }
+
+        info.status = sig.substr(6,1)[0];
+    }
+
+    return ERR_SUCCESS;
+}

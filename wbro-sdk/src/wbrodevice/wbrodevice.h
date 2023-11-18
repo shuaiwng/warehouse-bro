@@ -8,6 +8,8 @@
 #include <string>
 #include <iostream>
 
+#define SZ_BUFF 50
+
 enum ERR_DEVICE{
     ERR_SUCCESS = 0,
     ERR_COM_CREATEFILE,
@@ -15,24 +17,38 @@ enum ERR_DEVICE{
     ERR_COM_SETCOMM,
     ERR_COM_SETTIMEOUT,
     ERR_COM_CLOSEHANDLE,
-    ERR_CMD_READSIG,
-    ERR_CMD_CAM_INIT,
-    ERR_CMD_CAM_CLOSE,
-    ERR_CMD_CAM_DISCOVER,
-    ERR_CMD_CAM_CONN,
-    ERR_CMD_CAM_DISCONN,
-    ERR_CMD_CAM_SETPARAM,
-    ERR_CMD_CAM_MEASURE,
-    ERR_CMD_CAM_SAVEIMAGE
+    ERR_CAM_INIT,
+    ERR_CAM_CLOSE,
+    ERR_CAM_DISCOVER,
+    ERR_CAM_CONN,
+    ERR_CAM_DISCONN,
+    ERR_CAM_SETPARAM,
+    ERR_CAM_MEASURE,
+    ERR_CAM_SAVEIMAGE,
+    ERR_UC_SENDTO,
+    ERR_UC_READSIG,
+    ERR_UC_GETINFO
+};
+
+enum UC_MODE{
+    M_INVALID,
+    M_STANDBY,
+    M_SURVEILLANCE,
+    M_OPERATION
+};
+
+struct ucInfo_t{
+    UC_MODE mode;
+    char status;
+    float distance;
 };
 
 class WbroDevice{
 public:
     WbroDevice();
 
-    ERR_DEVICE Wbro_Dev_ConnectToCom(const std::string com_port);
-    ERR_DEVICE Wbro_Dev_DisconnectCom();
-    ERR_DEVICE Wbro_Dev_ReadSignal(int szbuf, std::string& sig, DWORD& c_sig);
+    ERR_DEVICE Wbro_Dev_Com_connect(const std::string com_port);
+    ERR_DEVICE Wbro_Dev_Com_disconnect();
     
     ERR_DEVICE Wbro_Dev_Cam_init();
     ERR_DEVICE Wbro_Dev_Cam_close();
@@ -45,9 +61,9 @@ public:
     ERR_DEVICE Wbro_Dev_Cam_take_image(Camera* cam);
     ERR_DEVICE Wbro_Dev_Cam_save_image(Camera* cam, const char* img_name);
 
-    // ERR_DEVICE Wbro_Dev_MC_send_signal();
-    // ERR_DEVICE Wbro_Dev_MC_receive_signal();
-    
+    ERR_DEVICE Wbro_Dev_uC_send_to(const char * cmd_send);
+    ERR_DEVICE Wbro_Dev_uC_read_from(std::string& sig, DWORD& c_sig);
+    ERR_DEVICE Wbro_Dev_uC_getInfo(std::string sig, ucInfo_t & info);
 
 
 private:
