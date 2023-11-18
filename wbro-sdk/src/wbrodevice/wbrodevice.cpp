@@ -49,7 +49,8 @@ ERR_DEVICE WbroDevice::Wbro_Dev_Cam_disconnect(std::vector<SV_DEVICE_INFO *> dev
 
 
 ERR_DEVICE WbroDevice::Wbro_Dev_Cam_setParam(Camera* cam, int expTime_ns){
-    bool b_set = svcam_set_parameter(cam, expTime_ns);
+    _expTime_ns = expTime_ns;
+    bool b_set = svcam_set_parameter(cam, _expTime_ns);
     if (b_set){
         return ERR_SUCCESS;
     } else {
@@ -57,8 +58,8 @@ ERR_DEVICE WbroDevice::Wbro_Dev_Cam_setParam(Camera* cam, int expTime_ns){
     }
 }
 
-ERR_DEVICE WbroDevice::Wbro_Dev_Cam_take_image(Camera* cam, int expTime_ns){
-    bool b_meas = svcam_aquire_image(cam, expTime_ns);
+ERR_DEVICE WbroDevice::Wbro_Dev_Cam_take_image(Camera* cam){
+    bool b_meas = svcam_acquire_image(cam, _expTime_ns);
     if (b_meas){
         return ERR_SUCCESS;
     } else {

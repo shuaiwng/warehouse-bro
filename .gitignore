@@ -1,4 +1,4 @@
-# ignore sandbox
+# ignore sandbox build
 _Sandbox/pc-serial-port/build
 
 # ignore build folders

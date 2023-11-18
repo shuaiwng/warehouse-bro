@@ -398,7 +398,7 @@ bool svcam_set_parameter(Camera* cam, int expTime_ns){
     }
 }
 
-bool svcam_aquire_image(Camera* cam, int expTime_ns){
+bool svcam_acquire_image(Camera* cam, int expTime_ns){
     printf("open streaming channel and start acquisition...\n");
     unsigned int bufcount = 1;
     cam->sv_cam_acq->AcquisitionStart(bufcount);

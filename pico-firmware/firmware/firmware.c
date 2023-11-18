@@ -83,7 +83,7 @@ int main()
             }
             if (b_valid){
                 float dist_cm = (float)width / 29 / 2;
-                printf("[>>OWF1<<] Distance in [CM]: %.3f\n", dist_cm);
+                printf("[>>OWF1<<](%.3f)\n", dist_cm);
             }
             sleep_ms(200);
         }

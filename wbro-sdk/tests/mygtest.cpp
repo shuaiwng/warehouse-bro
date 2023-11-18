@@ -58,7 +58,7 @@ TEST_F(DeviceTest, test_read_signal){
 
 
 TEST_F(DeviceTest, test_camera){
-
+    
     ERR_DEVICE b_discover = device.Wbro_Dev_Cam_discover(devInfoList, svCamSysList, tlIDList);
     EXPECT_EQ(b_discover, ERR_SUCCESS);
 
@@ -66,10 +66,10 @@ TEST_F(DeviceTest, test_camera){
     ERR_DEVICE b_connect = device.Wbro_Dev_Cam_connect(devInfoList, svCamSysList, tlIDList, cam);
     EXPECT_EQ(b_connect, ERR_SUCCESS);
 
-    ERR_DEVICE b_set = device.Wbro_Dev_Cam_setParam(cam, 1000000); // 1s
+    ERR_DEVICE b_set = device.Wbro_Dev_Cam_setParam(cam, 100000); // us
     EXPECT_EQ(b_set, ERR_SUCCESS);
 
-    ERR_DEVICE b_meas = device.Wbro_Dev_Cam_take_image(cam, 1000000); // 1s
+    ERR_DEVICE b_meas = device.Wbro_Dev_Cam_take_image(cam);
     EXPECT_EQ(b_meas, ERR_SUCCESS);
 
     std::string filename = "saved_image.png";

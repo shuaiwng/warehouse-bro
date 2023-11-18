@@ -43,8 +43,12 @@ public:
     ERR_DEVICE Wbro_Dev_Cam_disconnect(std::vector<SV_DEVICE_INFO *>, std::vector<SVCamSystem *>, std::vector<char *>);
 
     ERR_DEVICE Wbro_Dev_Cam_setParam(Camera* cam, int expTime_ns);
-    ERR_DEVICE Wbro_Dev_Cam_take_image(Camera* cam, int expTime_ns);
+    ERR_DEVICE Wbro_Dev_Cam_take_image(Camera* cam);
     ERR_DEVICE Wbro_Dev_Cam_save_image(Camera* cam, const char* img_name);
+
+    // ERR_DEVICE Wbro_Dev_MC_send_signal();
+    // ERR_DEVICE Wbro_Dev_MC_receive_signal();
+    
 
 
 private:
@@ -53,4 +57,5 @@ private:
     std::vector<SVCamSystem *> svCamSysList;
     std::vector<char *> tlIDList;
     Camera * cam;
+    int _expTime_ns;
 };
