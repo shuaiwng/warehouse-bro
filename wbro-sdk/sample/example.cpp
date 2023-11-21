@@ -32,11 +32,11 @@ int main(){
     // Reset to Standby
     std::cout << "Reset to Standby mode\n-----\n";
     stat = wbrodevice.Wbro_Dev_uC_send_to(std::string("1").c_str());
-    std::this_thread::sleep_for(2000ms);
+    std::this_thread::sleep_for(5000ms);
 
     // Standby mode
     std::cout << "Start Standby mode\n-----\n";
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 20; i++) {
         if (wbrodevice.Wbro_Dev_uC_read_from(sig, c_sig)){
             std::cout << "Error reading Signal.\n";
         }
@@ -44,7 +44,7 @@ int main(){
         stat = wbrodevice.Wbro_Dev_uC_getInfo(sig, info);
         std::cout << "GotInfoFromUC -> mode: " << info.mode << " status: " << info.status << "\n";
         if (info.mode == M_STANDBY) {
-            std::this_thread::sleep_for(1000ms);
+            std::this_thread::sleep_for(50ms);
             std::cout << ">> standing by...\n";
         }
     }
@@ -52,9 +52,9 @@ int main(){
     // Switch to Surveillance mode
     std::cout << "Start Surveillance mode\n-----\n";
     stat = wbrodevice.Wbro_Dev_uC_send_to(std::string("2").c_str());
-    std::this_thread::sleep_for(2000ms);
+    std::this_thread::sleep_for(5000ms);
 
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 30; i++) {
         stat = wbrodevice.Wbro_Dev_uC_read_from(sig, c_sig);
         std::cout << "RawSignal: " << sig << std::endl;
         stat = wbrodevice.Wbro_Dev_uC_getInfo(sig, info);
@@ -63,16 +63,16 @@ int main(){
             wbrodevice.Wbro_Dev_Cam_take_image(cam);
             wbrodevice.Wbro_Dev_Cam_save_image(cam, std::string("image_svl_"+std::to_string(i)+".png").c_str());
         }
-        std::this_thread::sleep_for(1000ms);
+        std::this_thread::sleep_for(50ms);
         std::cout << ">> surveillance mode...\n";
     }
 
     // Switch to Operation mode
     std::cout << "Start Operation mode\n-----\n";
     stat = wbrodevice.Wbro_Dev_uC_send_to(std::string("3").c_str());
-    std::this_thread::sleep_for(2000ms);
+    std::this_thread::sleep_for(5000ms);
 
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 30; i++) {
         stat = wbrodevice.Wbro_Dev_uC_read_from(sig, c_sig);
         std::cout << "RawSignal: " << sig << std::endl;
         stat = wbrodevice.Wbro_Dev_uC_getInfo(sig, info);
@@ -81,7 +81,7 @@ int main(){
             wbrodevice.Wbro_Dev_Cam_take_image(cam);
             wbrodevice.Wbro_Dev_Cam_save_image(cam, std::string("image_opr_"+std::to_string(i)+".png").c_str());
         }
-        std::this_thread::sleep_for(1000ms);
+        std::this_thread::sleep_for(50ms);
         std::cout << ">> operation mode...\n";
     }
 

@@ -8,7 +8,7 @@
 #include <string>
 #include <iostream>
 
-#define SZ_BUFF 50
+#define SZ_BUFF 20
 
 enum ERR_DEVICE{
     ERR_SUCCESS = 0,
