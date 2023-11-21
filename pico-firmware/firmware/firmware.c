@@ -26,7 +26,7 @@ int main()
     gpio_set_dir(HC_TRIG_PIN, GPIO_OUT);
     gpio_set_dir(HC_ECHO_PIN, GPIO_IN);
 
-    int workflow = 0;
+    int workflow = 1;
     while(true)
     {
         // Request command from the host
@@ -34,25 +34,25 @@ int main()
         if (PICO_ERROR_TIMEOUT == retHostCmd){
             sleep_ms(100);
         }
-        if( (char)retHostCmd == '0' ){
-            workflow = 0;
-        }
         if( (char)retHostCmd == '1' ){
             workflow = 1;
         }
-        else if ( (char)retHostCmd == '2' ){
+        if( (char)retHostCmd == '2' ){
             workflow = 2;
+        }
+        else if ( (char)retHostCmd == '3' ){
+            workflow = 3;
         }
 
         // Standby
-        if( workflow == 0){
+        if( workflow == 1){
             gpio_put(HEADLIGHT_PIN, 0);
             printf("[>>STB1<<]");
             sleep_ms(1000);
         }
 
         // Surveillance workflow
-        if ( workflow == 1){
+        if ( workflow == 2){
             if (gpio_get(PIR_PIN)){
                 printf("[>>SWF1<<]");
                 gpio_put(HEADLIGHT_PIN, 1);
@@ -63,7 +63,7 @@ int main()
         }
 
         // Operation workflow
-        if ( workflow == 2){
+        if ( workflow == 3){
             gpio_put(HEADLIGHT_PIN, 0);
             sleep_ms(10);
             gpio_put(HC_TRIG_PIN, 1);

@@ -10,7 +10,8 @@ SET(GTEST_DIR "C:/Home/Tools/googletest-1.14.0")
 SET(OPENCV_DIR "C:/Home/Tools/opencv/build")
 SET(SVSCAM_DIR "C:/Program Files/SVS-VISTEK GmbH/SVCam Kit/SDK")
 
-add_executable(MyTest ${SOURCE_FILES} tests/mygtest.cpp)
+# add_executable(MyTest ${SOURCE_FILES} tests/mygtest.cpp)
+add_executable(MyTest ${SOURCE_FILES} sample/example.cpp)
 
 include_directories(
     src/wbrocore
